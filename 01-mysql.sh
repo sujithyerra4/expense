@@ -1,0 +1,75 @@
+#!/bin/bash
+
+LOG_FOLDER=/var/log/expense
+SCRIPT_NAME=$(echo $0 | awk -F "." '{print $1}')
+TIME_STAMP=$(date +%Y-%m-%d-%H-%M-%S)
+LOG_FILE=$LOG_FOLDER/$SCRIPT_NAME-$TIME_STAMP.log
+
+mkdir -p $LOG_FOLDER
+
+
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
+
+
+USERID=$(id -u)
+
+if [ $USERID -ne 0 ]
+then 
+ echo -e " $R please proceed with root privilages $N" | tee -a $LOG_FILE
+ exit 1
+ fi
+
+
+echo "script started executing at : $(date)" | tee -a $LOG_FILE
+
+VALIDATE(){
+    if [ $1 -ne 0 ]
+    then
+    echo -e $2 is $R failure $N | tee -a $LOG_FILE
+    exit 1
+    else
+    echo -e $2 is $G success $N | tee -a $LOG_FILE
+    fi
+}
+
+dnf list installed mysql-server &>>$LOG_FILE
+
+if [ $? -ne 0 ]
+then 
+echo  mysql-server is not installed,installing | tee -a $LOG_FILE
+  dnf install mysql-server -y &>>$LOG_FILE
+  VALIDATE $? "Installing mysql-server"
+  else
+  echo -e mysql-server is already $Y installed $N | tee -a $LOG_FILE
+fi
+
+
+systemctl enable mysqld 
+if [ $? -eq 0 ]
+then
+ echo mysql is already enabled  | tee -a $LOG_FILE
+ fi
+
+
+
+systemctl start mysqld
+if [ $? -eq 0 ]
+then
+ echo mysql is already started  | tee -a $LOG_FILE
+ fi
+
+
+mysql -h mysql.sujithyerra.online -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
+if [ $? -ne 0 ]
+then
+echo mysql password is not setup,going to set up
+mysql_secure_installation --set-root-pass ExpenseApp@1 &>>$LOG_FILE
+VALIDATE $? "setting up root password" | tee -a $LOG_FILE
+else
+echo password already setup | tee -a $LOG_FILE
+fi
+
+# mysql -h <host-address> -u root -p<password>
