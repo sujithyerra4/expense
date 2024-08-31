@@ -60,7 +60,7 @@ VALIDATE $? "Removing default Nginx"
 unzip /tmp/frontend.zip &>>$LOG_FILE
 VALIDATE $? "Unzippingz frontend code"
 
-cp /home/ec2-user/expense-shell/backend.service /etc/nginx/default.d/expense.conf  &>>$LOG_FILE
+cp /home/ec2-user/expense/expense.conf /etc/nginx/default.d/expense.conf  &>>$LOG_FILE
 VALIDATE $? "copied expense conf"
 
 systemctl restart nginx  &>>$LOG_FILE
