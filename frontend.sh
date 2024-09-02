@@ -70,7 +70,8 @@ VALIDATE $? "Unzippingz frontend code"
 cp /home/ec2-user/expense/expense.conf /etc/nginx/default.d/expense.conf  &>>$LOG_FILE
 VALIDATE $? "copied expense conf"
 
-if systemctl is-active nginx  &>>$LOG_FILE; then
+if systemctl is-active nginx  &>>$LOG_FILE
+then
     echo -e "Service nginx is already running... $Y SKIPPING $N" | tee -a $LOG_FILE
 else
     systemctl restart nginx  &>>$LOG_FILE
