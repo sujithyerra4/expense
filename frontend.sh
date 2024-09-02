@@ -67,7 +67,14 @@ fi
 
 
 curl -o /tmp/frontend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip  &>>$LOG_FILE
+if [ $? -ne 0 ]
+then 
+ echo is not downloaded going to downloaded it 
+ curl -o /tmp/frontend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
 VALIDATE $? "Downloading frontend code "
+else
+echo alrdy downloaded
+fi
 
 
 
