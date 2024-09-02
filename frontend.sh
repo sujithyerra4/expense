@@ -35,8 +35,21 @@ VALIDATE(){
     fi
 }
 
- dnf install nginx -y &>>$LOG_FILE
-VALIDATE $? "Installing Nginx"
+dnf list installed nginx &>>$LOG_FILE
+
+if [ $? -ne 0 ]
+then 
+echo  nginx is not installed,installing | tee -a $LOG_FILE
+  dnf install nginx -y &>>$LOG_FILE
+  VALIDATE $? "Installing nginx"
+  else
+  echo -e nginx is already $Y installed $N | tee -a $LOG_FILE
+fi
+
+
+
+#  dnf install nginx -y &>>$LOG_FILE
+# VALIDATE $? "Installing Nginx"
 
 # systemctl enable nginx  &>>$LOG_FILE
 # VALIDATE $? "Enabling Nginx"
