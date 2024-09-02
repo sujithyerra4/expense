@@ -44,6 +44,7 @@ if systemctl is-enabled nginx
 then
   echo    -e "Service nginx is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
   else
+  systemctl enable nginx  &>>$LOG_FILE
 VALIDATE $? " Enabling nginx"
 fi
 
