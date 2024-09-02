@@ -76,7 +76,7 @@ VALIDATE $? "Schema loading"
 systemctl daemon-reload 
 
 
-if [ systemctl is-enabled backend ]
+if systemctl is-enabled backend 
 then
   echo    -e "Service backend is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
   else
@@ -86,7 +86,7 @@ fi
 # systemctl restart backend 
 # VALIDATE $? " Restarting backend"
 
-if [ systemctl is-active backend ] &>>$LOG_FILE; then
+if systemctl is-active backend  &>>$LOG_FILE; then
     echo -e "Service backend is already running... $Y SKIPPING $N" | tee -a $LOG_FILE
 else
     systemctl restart backend &>>$LOG_FILE
