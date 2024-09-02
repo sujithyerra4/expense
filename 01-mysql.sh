@@ -60,17 +60,17 @@ fi
 # then
 #  echo mysql is already started  | tee -a $LOG_FILE
 #  fi
-if [ systemctl is-enabled mysqld ]
-then
-  echo    -e "Service mysqld is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
-  else
-VALIDATE $? " Enabling mysqld"
+if systemctl is-enabled mysqld &>>$LOG_FILE; then
+    echo -e "Service mysqld is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
+else
+    # If not enabled, enable the service
+    systemctl enable mysqld &>>$LOG_FILE
+    VALIDATE $? "Enabling mysqld"
 fi
-
 # systemctl restart backend 
 # VALIDATE $? " Restarting backend"
 
-if [ systemctl is-active mysqld ] &>>$LOG_FILE; then
+if systemctl is-active mysqld  &>>$LOG_FILE; then
     echo -e "Service mysqld is already running... $Y SKIPPING $N" | tee -a $LOG_FILE
 else
     systemctl restart mysqld  &>>$LOG_FILE
