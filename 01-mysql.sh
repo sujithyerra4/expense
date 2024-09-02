@@ -47,20 +47,35 @@ echo  mysql-server is not installed,installing | tee -a $LOG_FILE
 fi
 
 
-systemctl enable mysqld 
-if [ $? -eq 0 ]
+# systemctl enable mysqld 
+# if [ $? -eq 0 ]
+# then
+#  echo mysql is already enabled  | tee -a $LOG_FILE
+#  fi
+
+
+
+# systemctl start mysqld
+# if [ $? -eq 0 ]
+# then
+#  echo mysql is already started  | tee -a $LOG_FILE
+#  fi
+if [ systemctl is-enabled mysqld ]
 then
- echo mysql is already enabled  | tee -a $LOG_FILE
- fi
+  echo    -e "Service mysqld is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
+  else
+VALIDATE $? " Enabling mysqld"
+fi
 
+# systemctl restart backend 
+# VALIDATE $? " Restarting backend"
 
-
-systemctl start mysqld
-if [ $? -eq 0 ]
-then
- echo mysql is already started  | tee -a $LOG_FILE
- fi
-
+if [ systemctl is-active mysqld ] &>>$LOG_FILE; then
+    echo -e "Service mysqld is already running... $Y SKIPPING $N" | tee -a $LOG_FILE
+else
+    systemctl restart mysqld  &>>$LOG_FILE
+    VALIDATE $? "Restarting mysqld"
+fi
 
 mysql -h mysql.sujithyerra.online -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
 if [ $? -ne 0 ]
