@@ -38,8 +38,14 @@ VALIDATE(){
 dnf install nginx -y &>>$LOG_FILE
 VALIDATE $? "Installing Nginx"
 
-systemctl enable nginx  &>>$LOG_FILE
-VALIDATE $? "Enabling Nginx"
+# systemctl enable nginx  &>>$LOG_FILE
+# VALIDATE $? "Enabling Nginx"
+if systemctl is-enabled nginx 
+then
+  echo    -e "Service nginx is already enabled... $Y SKIPPING $N" | tee -a $LOG_FILE
+  else
+VALIDATE $? " Enabling nginx"
+fi
 
 # systemctl start nginx  &>>$LOG_FILE
 # VALIDATE $? "Starting Nginx"
@@ -63,5 +69,9 @@ VALIDATE $? "Unzippingz frontend code"
 cp /home/ec2-user/expense/expense.conf /etc/nginx/default.d/expense.conf  &>>$LOG_FILE
 VALIDATE $? "copied expense conf"
 
-systemctl restart nginx  &>>$LOG_FILE
-VALIDATE $? "Restarting Nginx"
+if systemctl is-active nginx  &>>$LOG_FILE; then
+    echo -e "Service nginx is already running... $Y SKIPPING $N" | tee -a $LOG_FILE
+else
+    systemctl restart nginx  &>>$LOG_FILE
+    VALIDATE $? "Restarting nginx"
+fi
